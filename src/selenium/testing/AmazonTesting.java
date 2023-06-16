@@ -22,8 +22,6 @@ import org.openqa.selenium.support.ui.Select;
 
 public class AmazonTesting {
 
-//	static boolean noitem = true;
-	
 	public static WebDriver driver = null;
 	
 	public static void main(String[] args) throws InterruptedException {
@@ -48,10 +46,10 @@ public class AmazonTesting {
 				String title = driver.getTitle();
 				System.out.println("\nTitle1 : " + title);
 				
-				//creating a random product ex- product + random int
+				//creating a random product e.g.- product + random int
 				String randomItem = randomItem();
 				
-				//geting the webelement instance for the search box  
+				//getting the webelement instance for the search box
 				WebElement searchbox = driver.findElement(By.cssSelector("#twotabsearchtextbox"));
 				//searching for the randomItem
 				searchbox.sendKeys(randomItem);
@@ -60,7 +58,7 @@ public class AmazonTesting {
 				//webscraping all the product names that are coming on the site this helps in randomizing
 				List<WebElement> headingElements = driver.findElements(By.cssSelector(".a-color-base.a-text-normal"));
 				
-				//storing all the product names in a arraylist
+				//storing all the product names in an arraylist
 				List<String> products = new ArrayList<>();
 				for(WebElement element : headingElements) {
 	        		String product_names = element.getText();
@@ -95,7 +93,7 @@ public class AmazonTesting {
 				
 				Thread.sleep(4000);
 			
-				//geting the minimum and maximum quantity allowed on the item and randomly selecting one quantity
+				//getting the minimum and maximum quantity allowed on the item and randomly selecting one quantity
 				WebElement quantityDropdown = driver.findElement(By.xpath("//select[@name='quantity']"));
 				String randomQty = randomquantity(quantityDropdown.getText());
 				Select quantitySelect = new Select(quantityDropdown);
@@ -110,7 +108,7 @@ public class AmazonTesting {
 				driver.switchTo().window(firstWindowHandle);
 				driver.navigate().refresh();
 				
-				//finding the card button and clicking it to display the carts
+				//finding the cart button and clicking it to display the cart
 				WebElement cart = driver.findElement(By.cssSelector("#nav-cart-count"));
 				cart.click();
 		
@@ -118,30 +116,20 @@ public class AmazonTesting {
 				driver.quit();
 				try_again = false;
 			}
-//			catch(NoSuchElementException e) {
-//				driver.close();
-//				try_again = true;
-//				System.err.println("\nEither quantity or add_to_cart element is not found \nRestarting...");
-//			}catch (WebDriverException e) {
-//				driver.close();
-//				try_again = true;
-//	            System.err.println("\nWebDriverException occurred: " + e.getMessage() + "\nRestarting...");
-//	        }
 			catch(Exception e) {
+			    // in case of no search results
+			    // or any other error
 	        	System.err.println("ERROR");
 				driver.quit();
 				Thread.sleep(1000);
 				try_again = true;
 				e.printStackTrace();
 			}
-//			finally {
-//				
-//			}
 		}
 	}
-	
+
+	//method to first search a random product query
 	static String randomItem() {
-//		String[] array = {"Fridge", "AC", "Phone", "Ipad", "cover"};
 		Random random = new Random();
 		int randomIndex = 0;
         try {
@@ -149,15 +137,11 @@ public class AmazonTesting {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//        if(noitem)
-//        {
-//        	randomIndex = 89;
-//        	noitem = false;
-//        }
         String randomElement = "product" + randomIndex;
 		return randomElement;	
 	}
-	
+
+	//choosing a random quantity for the product out of the allowed quantities
 	static String randomquantity(String quantity) {
 		ArrayList<String> qty = new ArrayList<>();
 		for(int i=0;i<quantity.length();i++) {
@@ -173,33 +157,4 @@ public class AmazonTesting {
         System.out.println("\nThe quantity selected is : " + qty.get(randomIndex));
         return qty.get(randomIndex);	
 	}
-
 }
-
-
-//WebElement element1 = driver.findElement(By.cssSelector("#nav-xshop > a:nth-child(2)"));
-//Actions action = new Actions(driver);
-//action.moveToElement(element1);
-////action.click();
-////action.perform();
-
-
-//WebElement addTo_cart = driver.findElement(By.id("gw-sign-in-button"));
-//addTo_cart.click();
-//quantityDropdown.click();
-
-
-//adding in file approach
-//try (FileWriter writer = new FileWriter(filePath, true)) {
-//	writer.write(title + "\n\n\n");
-//	for(WebElement element : headingElements) {
-//		String product_names = element.getText();
-//		products.add(product_names);
-////		System.out.println(product_names + "\n");
-////    	writer.write(product_names);
-////    	writer.write("\n\n");
-////		System.out.println(product_names);
-//	}
-//} catch (IOException e) {
-//    System.out.println("An error occurred while writing to the file: " + e.getMessage());
-//}
