@@ -69,70 +69,74 @@ public class AmazonTesting {
 		        		category.add(catg);
 		        	}
 		        }
-
-				
-
-				//creating a random product choosing from list of dynamically generated catelogs
-				String randomItem = randomItem(category);
-				
-				//getting the webelement instance for the search box
-				WebElement searchbox = driver.findElement(By.cssSelector("#twotabsearchtextbox"));
-				//searching for the randomItem
-				searchbox.sendKeys(randomItem);
-				searchbox.submit();
-				
-				//webscraping all the product names that are coming on the site this helps in randomizing
-				List<WebElement> headingElements = driver.findElements(By.cssSelector(".a-color-base.a-text-normal"));
-				
-				//storing all the product names in an arraylist
-				List<String> products = new ArrayList<>();
-				for(WebElement element : headingElements) {
-	        		String product_names = element.getText();
-	        		products.add(product_names);
-				}
-				
-				Thread.sleep(4000);
-				
-				//selecting a random product from the Products arraylist
 				Random random = new Random();
-				searchbox = driver.findElement(By.cssSelector("#twotabsearchtextbox"));
-				searchbox.clear();
-				searchbox.sendKeys(products.get(random.nextInt(products.size())));
-				searchbox.submit();
+
+		        int randomTimes = random.nextInt(3);
+				while(randomTimes-- > 0) {
+
+					//creating a random product choosing from list of dynamically generated catelogs
+					String randomItem = randomItem(category);
+					
+					//getting the webelement instance for the search box
+					WebElement searchbox = driver.findElement(By.cssSelector("#twotabsearchtextbox"));
+					//searching for the randomItem
+					searchbox.sendKeys(randomItem);
+					searchbox.submit();
+					
+					//webscraping all the product names that are coming on the site this helps in randomizing
+					List<WebElement> headingElements = driver.findElements(By.cssSelector(".a-color-base.a-text-normal"));
+					
+					//storing all the product names in an arraylist
+					List<String> products = new ArrayList<>();
+					for(WebElement element : headingElements) {
+		        		String product_names = element.getText();
+		        		products.add(product_names);
+					}
+					
+					Thread.sleep(4000);
+					
+					//selecting a random product from the Products arraylist
+					searchbox = driver.findElement(By.cssSelector("#twotabsearchtextbox"));
+					searchbox.clear();
+					searchbox.sendKeys(products.get(random.nextInt(products.size())));
+					searchbox.submit();
+					
+					//selecting the first item in the list that appears on search
+					WebElement searchElement1 = driver.findElement(By.cssSelector("div[data-component-type='s-search-result'] h2 a"));
+					searchElement1.click();
+					
+					//since in amazon the item on clicking opens in a new window 
+					//so switching between the windows
+					String firstWindowHandle = driver.getWindowHandle();
+					for (String windowHandle : driver.getWindowHandles()) {
+					    if (!windowHandle.equals(firstWindowHandle)) {
+					        driver.switchTo().window(windowHandle);
+					        break;
+					    }
+					}	
+					//rechecking the title of the window
+					String title2 = driver.getCurrentUrl();
+					System.out.println("\nTitle2 : " + title2);
+					
+					Thread.sleep(4000);
 				
-				//selecting the first item in the list that appears on search
-				WebElement searchElement1 = driver.findElement(By.cssSelector("div[data-component-type='s-search-result'] h2 a"));
-				searchElement1.click();
-				
-				//since in amazon the item on clicking opens in a new window 
-				//so switching between the windows
-				String firstWindowHandle = driver.getWindowHandle();
-				for (String windowHandle : driver.getWindowHandles()) {
-				    if (!windowHandle.equals(firstWindowHandle)) {
-				        driver.switchTo().window(windowHandle);
-				        break;
-				    }
-				}	
-				//rechecking the title of the window
-				String title2 = driver.getCurrentUrl();
-				System.out.println("\nTitle2 : " + title2);
-				
-				Thread.sleep(4000);
-			
-				//getting the minimum and maximum quantity allowed on the item and randomly selecting one quantity
-				WebElement quantityDropdown = driver.findElement(By.xpath("//select[@name='quantity']"));
-				String randomQty = randomquantity(quantityDropdown.getText());
-				Select quantitySelect = new Select(quantityDropdown);
-				quantitySelect.selectByValue(randomQty);
-				
-				//finding add to cart button and clicking it
-				WebElement addTo_cart = driver.findElement(By.id("add-to-cart-button"));
-				addTo_cart.click();
-				Thread.sleep(4000);
-				
-				//switch to first window of chrome and refreshing the page
-				driver.switchTo().window(firstWindowHandle);
-				driver.navigate().refresh();
+					//getting the minimum and maximum quantity allowed on the item and randomly selecting one quantity
+					WebElement quantityDropdown = driver.findElement(By.xpath("//select[@name='quantity']"));
+					String randomQty = randomquantity(quantityDropdown.getText());
+					Select quantitySelect = new Select(quantityDropdown);
+					quantitySelect.selectByValue(randomQty);
+					
+					//finding add to cart button and clicking it
+					WebElement addTo_cart = driver.findElement(By.id("add-to-cart-button"));
+					addTo_cart.click();
+					Thread.sleep(4000);
+					
+					//switch to first window of chrome and refreshing the page
+					driver.close();
+					
+					driver.switchTo().window(firstWindowHandle);
+					driver.navigate().refresh();
+				}
 				
 				//finding the cart button and clicking it to display the cart
 				WebElement cart = driver.findElement(By.cssSelector("#nav-cart-count"));
