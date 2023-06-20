@@ -47,9 +47,37 @@ public class AmazonTesting {
 				//checking the title once 
 				String title = driver.getTitle();
 				System.out.println("\nTitle1 : " + title);
+				WebElement allCategoriesDropdown = driver.findElement(By.id("nav-hamburger-menu"));
+		        allCategoriesDropdown.click();
+		        
+		        List<WebElement> categorytitleLinks = driver.findElements(By.cssSelector(".hmenu-item.hmenu-title "));
+		        List<String> categorytitles = new ArrayList<>();
+		        for (WebElement categorytitleLink : categorytitleLinks) {
+		        	String catg = categorytitleLink.getText();
+//	        		System.out.println(catg);
+
+		        	if(catg.matches(".*[a-zA-Z0-9].*")) {
+		        		categorytitles.add(catg);
+		        		System.out.println(catg);
+		        	}
+		        }
+		        
+		        List<WebElement> categoryLinks = driver.findElements(By.cssSelector(".hmenu-item"));
+		        List<String> category = new ArrayList<>();
+		        for (WebElement categoryLink : categoryLinks) {
+		        	String catg = categoryLink.getText();
+//	        		System.out.println(catg);
+
+		        	if(catg.equals("Help & Settings")) break;
+		        	if(catg.matches(".*[a-zA-Z0-9].*") && !categorytitles.contains(catg)) {
+		        		category.add(catg);
+		        		System.out.println(catg);
+		        	}
+		        }
+
 				
 				//creating a random product ex- product + random int
-				String randomItem = randomItem();
+				String randomItem = randomItem(category);
 				
 				//geting the webelement instance for the search box  
 				WebElement searchbox = driver.findElement(By.cssSelector("#twotabsearchtextbox"));
@@ -118,17 +146,21 @@ public class AmazonTesting {
 				driver.quit();
 				try_again = false;
 			}
-//			catch(NoSuchElementException e) {
-//				driver.close();
-//				try_again = true;
-//				System.err.println("\nEither quantity or add_to_cart element is not found \nRestarting...");
-//			}catch (WebDriverException e) {
-//				driver.close();
-//				try_again = true;
-//	            System.err.println("\nWebDriverException occurred: " + e.getMessage() + "\nRestarting...");
-//	        }
+			catch(NoSuchElementException e) {
+				System.err.println("ERROR");
+				driver.quit();
+				Thread.sleep(1000);
+				try_again = true;
+				System.err.println("\nEither quantity or add_to_cart element is not found \nRestarting...");
+			}catch (WebDriverException e) {
+				System.err.println("ERROR");
+				driver.quit();
+				Thread.sleep(1000);
+				try_again = true;
+	            System.err.println("\nWebDriverException occurred: " + e.getMessage() + "\nRestarting...");
+	        }
 			catch(Exception e) {
-	        	System.err.println("ERROR");
+	        	System.err.println("ERROR \nRestarting...");
 				driver.quit();
 				Thread.sleep(1000);
 				try_again = true;
@@ -140,12 +172,13 @@ public class AmazonTesting {
 		}
 	}
 	
-	static String randomItem() {
+	static String randomItem(List<String> categories) {
 //		String[] array = {"Fridge", "AC", "Phone", "Ipad", "cover"};
 		Random random = new Random();
 		int randomIndex = 0;
         try {
-        	randomIndex = random.nextInt(100);
+//        	randomIndex = random.nextInt(100);
+        	randomIndex = random.nextInt(categories.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -154,7 +187,9 @@ public class AmazonTesting {
 //        	randomIndex = 89;
 //        	noitem = false;
 //        }
-        String randomElement = "product" + randomIndex;
+//        String randomElement = "product" + randomIndex;
+        String randomElement = categories.get(randomIndex);
+        System.out.println("Search category selected " + randomElement );
 		return randomElement;	
 	}
 	

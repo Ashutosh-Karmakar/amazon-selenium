@@ -42,6 +42,7 @@ public class fourth {
         
         Thread.sleep(3000);
         String title = driver.getTitle();
+        System.out.println(title);
         
 //        List<WebElement> paragraphElements = driver.findElements(By.cssSelector("p"));
 //        List<String> paragraphsText = new ArrayList<>();
